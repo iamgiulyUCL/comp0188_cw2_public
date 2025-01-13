@@ -55,6 +55,17 @@ class TrackerBalancedLoss:
                 "value":_loss
             }
             loss += _loss
+
+        # Compute MSE for the first 3 elements of "pos"
+        mse_pos = torch.mean((pred["pos"] - act["pos"]) ** 2).item()
+        _metric_value_dict[f"{self.name}_mse_pos"] = {"value": mse_pos}
+
+        # Compute accuracy for the 4th element ("grp")
+        pred_labels = torch.argmax(pred["grp"], dim=1)
+        true_labels = torch.argmax(act["grp"], dim=1)
+        accuracy_grp = (pred_labels == true_labels).float().mean().item()
+        _metric_value_dict[f"{self.name}_accuracy_grp"] = {"value": accuracy_grp}
+        
         if self.mo is not None:
             self.mo.update_metrics(metric_value_dict=_metric_value_dict)
         out_loss = torch.mean(loss)
