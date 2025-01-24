@@ -26,36 +26,70 @@ def to_greyscale(
     """
     return np.matmul(c_img, [0.2989, 0.5870, 0.1140])
 
+# def load_all_files(
+#     h5_dir:str,
+#     file_pattern:str,
+#     keys:List[str]
+#     )->Dict[str,np.ndarray]:
+#     """Function to load all h5 files from a specified location into a numpy 
+#     array
+
+#     Args:
+#         h5_dir (str): Directory containing target h5 files
+#         file_pattern (str): A regex defining the names of the target h5 files 
+#         in the directory
+#         keys (List[str]): The keys to load from the h5 files
+
+#     Returns:
+#         Dict[str,np.ndarray]: Dictionary of numpy arrays
+#     """
+#     all_files = [
+#         i for i in os.listdir(h5_dir) if re.match(file_pattern,i) is not None
+#     ]
+#     all_arrays = {k:[] for k in keys}
+#     for f_name in tqdm(all_files):
+#         with h5py.File(
+#             os.path.join(h5_dir, f_name),
+#             'r') as h5f:
+#             for k in keys:
+#                 all_arrays[k].append(h5f[k][()])
+#     for k in keys:
+#         all_arrays[k] = np.concatenate(all_arrays[k],axis=0)
+#     return all_arrays
+
 def load_all_files(
-    h5_dir:str,
-    file_pattern:str,
-    keys:List[str]
-    )->Dict[str,np.ndarray]:
-    """Function to load all h5 files from a specified location into a numpy 
-    array
+        h5_dir: str = "./data/all_play_data_diverse", 
+        file_pattern: str = ".*\.h5", 
+        keys: List[str]
+) -> Dict[str, np.ndarray]:
+    """
+    Function to load all h5 files from a specified location into a numpy array.
 
     Args:
-        h5_dir (str): Directory containing target h5 files
+        h5_dir (str): Directory containing target h5 files 
+                      (default: "./data/all_play_data_diverse").
         file_pattern (str): A regex defining the names of the target h5 files 
-        in the directory
+                           in the directory (default: ".*\.h5").
         keys (List[str]): The keys to load from the h5 files
 
     Returns:
-        Dict[str,np.ndarray]: Dictionary of numpy arrays
+        Dict[str, np.ndarray]: Dictionary of numpy arrays
     """
     all_files = [
-        i for i in os.listdir(h5_dir) if re.match(file_pattern,i) is not None
+        i for i in os.listdir(h5_dir) if re.match(file_pattern, i) is not None
     ]
-    all_arrays = {k:[] for k in keys}
+    all_arrays = {k: [] for k in keys}
     for f_name in tqdm(all_files):
-        with h5py.File(
-            os.path.join(h5_dir, f_name),
-            'r') as h5f:
+        with h5py.File(os.path.join(h5_dir, f_name), 'r') as h5f:
             for k in keys:
                 all_arrays[k].append(h5f[k][()])
     for k in keys:
-        all_arrays[k] = np.concatenate(all_arrays[k],axis=0)
+        all_arrays[k] = np.concatenate(all_arrays[k], axis=0)
     return all_arrays
+
+# Example usage:
+keys_to_load = ["data1", "data2"]  # Replace with your actual keys
+loaded_data = load_all_files(keys=keys_to_load)
 
 
 def wandb_csv_to_pandas(
